@@ -78,11 +78,11 @@ try {
     $mail->Port = (int)(getenv('IECMS_SMTP_PORT') ?: ($_ENV['IECMS_SMTP_PORT'] ?? getenv('SMTP_PORT') ?: ($_ENV['SMTP_PORT'] ?? 587)));
     $mail->setFrom(
         getenv('IECMS_MAIL_FROM_EMAIL') ?: ($_ENV['IECMS_MAIL_FROM_EMAIL'] ?? getenv('MAIL_FROM_EMAIL') ?: ($_ENV['MAIL_FROM_EMAIL'] ?? $smtpUsername)),
-        getenv('IECMS_MAIL_FROM_NAME') ?: ($_ENV['IECMS_MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME') ?: ($_ENV['MAIL_FROM_NAME'] ?? 'IECMS'))
+        getenv('IECMS_MAIL_FROM_NAME') ?: ($_ENV['IECMS_MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME') ?: ($_ENV['MAIL_FROM_NAME'] ?? 'QUIMS'))
     );
     $mail->addAddress($user['email'], (string)$user['full_name']);
     $mail->isHTML(true);
-    $mail->Subject = 'IECMS password reset';
+    $mail->Subject = 'QUIMS password reset';
     $safeName = htmlspecialchars((string)$user['full_name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $safeLink = htmlspecialchars($resetLink, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $mail->Body = '<div style="font-family:Arial,sans-serif">'
@@ -90,7 +90,7 @@ try {
         . '<p>We received a request to reset your password. Use the link below within 5 minutes:</p>'
         . '<p><a href="' . $safeLink . '" style="background:#0f766e;color:#fff;padding:12px 18px;text-decoration:none;border-radius:8px;display:inline-block">Reset Password</a></p>'
         . '<p>If you did not request this, you can ignore this email.</p></div>';
-    $mail->AltBody = 'Use this link within 5 minutes to reset your IECMS password: ' . $resetLink;
+    $mail->AltBody = 'Use this link within 5 minutes to reset your QUIMS password: ' . $resetLink;
     $mail->send();
 
     sendPasswordResetResponse(200, $genericResponse);

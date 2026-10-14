@@ -23,7 +23,7 @@ try {
     if ($mail->Username === '' || $mail->Password === '' || $recipient === '') {
         throw new RuntimeException('Configure IECMS_SMTP_USER, IECMS_SMTP_PASSWORD, and IECMS_SMTP_TEST_RECIPIENT before testing.');
     }
-    $mail->setFrom($from, getenv('IECMS_MAIL_FROM_NAME') ?: 'IECMS System');
+    $mail->setFrom($from, getenv('IECMS_MAIL_FROM_NAME') ?: 'QUIMS System');
     $mail->addAddress($recipient);
 
     $mail->Subject = 'QUIMS Test Email';

@@ -138,7 +138,7 @@ function sendPeriodReport(PDO $pdo, $period, DateTimeImmutable $start, DateTimeI
         $staff = $staffStmt->fetchAll(PDO::FETCH_ASSOC);
 
         $periodLabel = reportPeriodLabel($period, $start, $end);
-        $heading = 'IECMS ' . ucfirst($period) . ' Issues Report: ' . $periodLabel;
+        $heading = 'QUIMS ' . ucfirst($period) . ' Issues Report: ' . $periodLabel;
         $html = '<h2>' . htmlspecialchars($heading, ENT_QUOTES, 'UTF-8') . '</h2>';
         $html .= '<p><strong>Total issues registered:</strong> ' . (int)($summary['registered'] ?? 0) . '<br>';
         $html .= '<strong>Total resolved:</strong> ' . (int)($summary['resolved'] ?? 0) . '<br>';
@@ -165,8 +165,8 @@ function sendPeriodReport(PDO $pdo, $period, DateTimeImmutable $start, DateTimeI
             $mail->Password = $smtpPassword;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = (int)(getenv('IECMS_SMTP_PORT') ?: 587);
-            $mail->setFrom($smtpUser, 'IECMS Reports');
-            $mail->addAddress($recipient['email'], $recipient['full_name'] ?: 'IECMS user');
+            $mail->setFrom($smtpUser, 'QUIMS Reports');
+            $mail->addAddress($recipient['email'], $recipient['full_name'] ?: 'QUIMS user');
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body = $body;
@@ -197,7 +197,7 @@ function sendPeriodReport(PDO $pdo, $period, DateTimeImmutable $start, DateTimeI
                     break;
                 }
             }
-            $assistantHeading = 'IECMS ' . ucfirst($period) . ' Personal Issues Report: ' . $periodLabel;
+            $assistantHeading = 'QUIMS ' . ucfirst($period) . ' Personal Issues Report: ' . $periodLabel;
             $assistantHtml = '<h2>' . htmlspecialchars($assistantHeading, ENT_QUOTES, 'UTF-8') . '</h2>';
             $assistantHtml .= '<p>Hello ' . htmlspecialchars((string)$assistant['full_name'], ENT_QUOTES, 'UTF-8') . ',</p>';
             $assistantHtml .= '<p><strong>Your total assigned issues:</strong> ' . $assistantTotal . '<br>';

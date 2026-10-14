@@ -195,14 +195,14 @@ function sendAssignmentEmail($email, $name, $ticketId) {
         $mail->Password = $smtpPassword;
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = (int)(getenv('IECMS_SMTP_PORT') ?: 587);
-        $mail->setFrom($smtpUser, 'IECMS Assignments');
+        $mail->setFrom($smtpUser, 'QUIMS Assignments');
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
-        $mail->Subject = 'IECMS task assigned: ' . $ticketId;
+        $mail->Subject = 'QUIMS task assigned: ' . $ticketId;
         $mail->Body = '<p>Hello ' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ',</p>'
             . '<p>Task <strong>' . htmlspecialchars($ticketId, ENT_QUOTES, 'UTF-8') . '</strong> has been assigned to you.</p>'
-            . '<p>Sign in to IECMS to review and update it.</p>';
-        $mail->AltBody = 'Task ' . $ticketId . ' has been assigned to you. Sign in to IECMS to review it.';
+            . '<p>Sign in to QUIMS to review and update it.</p>';
+        $mail->AltBody = 'Task ' . $ticketId . ' has been assigned to you. Sign in to QUIMS to review it.';
         $mail->send();
     } catch (\Throwable $exception) {
         error_log('IECMS assignment email failed: ' . $exception->getMessage());
