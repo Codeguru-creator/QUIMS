@@ -11,7 +11,7 @@ let dataReloadProfile = false;
 function redirectToLoginIfUnauthorized(response) {
   if (response.status !== 401 || authRedirectStarted) return false;
   authRedirectStarted = true;
-  window.location.replace('../login.html');
+  window.location.replace('../index.html');
   return true;
 }
 

@@ -157,9 +157,9 @@ async function verifySupervisorDashboardSession() {
     const user = await response.json();
     const routes = { admin: '../admin/index.php', supervisor: 'supervisor-dashboard.php', assistant: '../assistant/assistant-dashboard.php', general_user: '../user-dashboard.php' };
     const role = String(user.role || '').toLowerCase();
-    if (role !== 'supervisor') window.location.replace(routes[role] || '../login.html');
+    if (role !== 'supervisor') window.location.replace(routes[role] || '../index.html');
   } catch (error) {
-    window.location.replace('../login.html');
+    window.location.replace('../index.html');
   }
 }
 
@@ -323,7 +323,7 @@ async function handleSignOut() {
     console.error('Logout request failed:', err);
   } finally {
     closeModal();
-    window.location.href = '../login.html';
+    window.location.href = '../index.html';
   }
 }
 

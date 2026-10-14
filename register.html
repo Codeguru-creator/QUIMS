@@ -297,7 +297,7 @@ input:focus, select:focus, textarea:focus{outline:none;border-color:var(--accent
         </button>
       </form>
 
-      <div class="login-link">Already registered? <a href="login.html">Login here</a></div>
+      <div class="login-link">Already registered? <a href="index.html">Login here</a></div>
     </div>
   </div>
 </div>
@@ -470,7 +470,7 @@ document.getElementById('regForm').addEventListener('submit',async e=>{
     const message = document.getElementById('registrationMessage');
     message.className = 'form-notice success';
     message.textContent = result.message || 'Registration successful. Redirecting to login...';
-    setTimeout(() => { window.location.href = 'login.html'; }, 1600);
+    setTimeout(() => { window.location.href = 'index.html'; }, 1600);
   } catch (error) {
     submitBtn.classList.remove('loading');
     const message = document.getElementById('registrationMessage');

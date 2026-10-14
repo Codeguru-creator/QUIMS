@@ -1637,7 +1637,7 @@ async function lookupSignatureSigner(name, statusElement) {
     if (!response.ok) throw new Error(signer.error || 'Signature lookup failed');
   } catch (error) {
     const message = location.protocol === 'file:'
-      ? 'Open the dashboard through http://localhost/iecms/login.html so PHP can check the signature.'
+      ? 'Open the dashboard through http://localhost/iecms/index.html so PHP can check the signature.'
       : !navigator.onLine
         ? 'No network connection. Reconnect and try again.'
         : (error.message || 'Unable to check this signature right now. Please try again.');

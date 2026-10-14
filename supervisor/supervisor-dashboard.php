@@ -14,7 +14,7 @@ if ($role !== 'supervisor') {
 	} elseif (($_SESSION['user_type'] ?? '') === 'general') {
 		header('Location: ../user-dashboard.php');
 	} else {
-		header('Location: ../login.html');
+		header('Location: ../index.html');
 	}
 	exit;
 }

@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (($_SESSION['user_type'] ?? '') !== 'general' || empty($_SESSION['user_id'])) {
-    header('Location: login.html');
+    header('Location: index.html');
     exit;
 }
 
@@ -18,7 +18,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 if (!$user) {
     session_destroy();
-    header('Location: login.html');
+    header('Location: index.html');
     exit;
 }
 
@@ -85,10 +85,10 @@ function e($value) {
         const response = await fetch('api/users.php?action=current', { credentials: 'include', cache: 'no-store' });
         const user = response.ok ? await response.json() : null;
         if (!user || String(user.role).toLowerCase() !== 'general_user') {
-          window.location.replace('login.html');
+          window.location.replace('index.html');
         }
       } catch (error) {
-        window.location.replace('login.html');
+        window.location.replace('index.html');
       }
     });
 
@@ -96,7 +96,7 @@ function e($value) {
       try {
         await fetch('api/logout.php', { method: 'POST', credentials: 'include', cache: 'no-store' });
       } finally {
-        window.location.replace('login.html');
+        window.location.replace('index.html');
       }
     });
     document.getElementById('passkey-form').addEventListener('submit', async (event) => {

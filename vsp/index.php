@@ -5,7 +5,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: ../login.html?returnTo=' . rawurlencode('vsp/index.php'));
+    header('Location: ../index.html?returnTo=' . rawurlencode('vsp/index.php'));
     exit;
 }
 
@@ -14,7 +14,7 @@ if (!in_array($role, ['admin', 'supervisor', 'assistant'], true)) {
     if (($_SESSION['user_type'] ?? '') === 'general') {
         header('Location: ../user-dashboard.php');
     } else {
-        header('Location: ../login.html');
+        header('Location: ../index.html');
     }
     exit;
 }

@@ -1595,7 +1595,7 @@ async function lookupSignatureSigner(name, statusElement) {
     return true;
   } catch (error) {
     const message = location.protocol === 'file:'
-      ? 'Open the dashboard through http://localhost/iecms/login.html so the signature can be checked.'
+      ? 'Open the dashboard through http://localhost/iecms/index.html so the signature can be checked.'
       : !navigator.onLine
         ? 'No network connection. Reconnect and try again.'
         : (error.message || 'Unable to check this signature right now. Please try again.');
