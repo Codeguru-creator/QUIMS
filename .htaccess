@@ -1,0 +1,32 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Logout routes
+RewriteRule ^logout(\.php)?$ logout.php [L,QSA]
+RewriteRule ^api/logout(\.php)?$ api/logout.php [L,QSA]
+
+# Assistants roster
+RewriteRule ^api/assistants(\.php)?$ api/assistants.php [L,QSA]
+
+# Users sub-routes
+RewriteRule ^api/users/current(\.php)?$ api/users.php [L,QSA]
+RewriteRule ^api/users/reset-password(\.php)?$ api/reset-password.php [L,QSA]
+RewriteRule ^api/users/reset-passkey(\.php)?$ api/reset-passkey.php [L,QSA]
+RewriteRule ^api/users/status(\.php)?$ api/status.php [L,QSA]
+RewriteRule ^api/users/delete(\.php)?$ api/delete.php [L,QSA]
+RewriteRule ^api/users/(.*)$ api/users.php [L,QSA]
+
+# Notifications sub-routes
+RewriteRule ^api/notifications/mark-read(\.php)?$ api/notifications-mark-read.php [L,QSA]
+RewriteRule ^api/notifications/mark-all-read(\.php)?$ api/notifications-mark-all-read.php [L,QSA]
+
+# Tickets sub-routes
+RewriteRule ^api/tickets/cleanup-expired(\.php)?$ api/cleanup-expired.php [L,QSA]
+
+# Gemini AI
+RewriteRule ^api/gemini/generate(\.php)?$ api/gemini.php [L,QSA]
+
+# Stats aliases
+RewriteRule ^api/backend-stats(\.php)?$ api/stats.php [L,QSA]
+RewriteRule ^api/system-stats(\.php)?$ api/stats.php [L,QSA]

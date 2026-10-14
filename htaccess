@@ -1,0 +1,24 @@
+# .htaccess - URL rewriting for clean API routes (Apache)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Users sub-routes
+RewriteRule ^api/users/reset-password(\.php)?$ api/reset-password.php [L,QSA]
+RewriteRule ^api/users/reset-passkey(\.php)?$ api/reset-passkey.php [L,QSA]
+RewriteRule ^api/users/status(\.php)?$ api/status.php [L,QSA]
+RewriteRule ^api/users/delete(\.php)?$ api/delete.php [L,QSA]
+
+# Notifications sub-routes
+RewriteRule ^api/notifications/mark-read(\.php)?$ api/notifications-mark-read.php [L,QSA]
+RewriteRule ^api/notifications/mark-all-read(\.php)?$ api/notifications-mark-all-read.php [L,QSA]
+
+# Tickets sub-routes
+RewriteRule ^api/tickets/cleanup-expired(\.php)?$ api/cleanup-expired.php [L,QSA]
+
+# Gemini AI
+RewriteRule ^api/gemini/generate(\.php)?$ api/gemini.php [L,QSA]
+
+# Stats aliases
+RewriteRule ^api/backend-stats(\.php)?$ api/stats.php [L,QSA]
+RewriteRule ^api/system-stats(\.php)?$ api/stats.php [L,QSA]

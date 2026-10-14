@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /api/
+
+# If the request matches an existing file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Otherwise, route everything to index.php
+RewriteRule ^ index.php [L,QSA]

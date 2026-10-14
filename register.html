@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QUIMS | Secure Registration</title>
+ 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#ffffff;--card:#ffffff;--text:#0f172a;--muted:#64748b;--border:#cbd5e1;--accent:#0f766e;--danger:#ef4444;--success:#10b981;
+}
+body.dark{--bg:#020617;--card:#020617;--text:#e5e7eb;--muted:#94a3b8;--border:#1e293b}
+body{
+  margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+  display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;
+  transition:background .3s,color .3s;
+}
+
+#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+
+.wrapper{width:100%;max-width:clamp(280px,95vw,420px);padding:clamp(12px,4vw,20px);z-index:10;margin:auto}
+.card{background:linear-gradient(135deg,#064e3b,#0f766e,#a16207);border-radius:clamp(12px,3vw,18px);padding:2px;box-shadow:0 15px 20px -5px rgba(0,0,0,.15)}
+.inner{background:var(--card);border-radius:clamp(10px,3vw,16px);padding:clamp(16px,4vw,26px);display:flex;flex-direction:column;align-items:center;transition:background .3s;max-height:85vh;overflow-y:auto}
+
+@keyframes waterFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.logo{width:clamp(50px,12vw,70px);height:clamp(50px,12vw,70px);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(6,78,59,.45);overflow:hidden;background:linear-gradient(120deg,#064e3b,#0f766e,#34d399,#0f766e);animation:waterFlow 6s ease-in-out infinite;margin-bottom:clamp(10px,2vw,14px)}
+.logo img{width:100%;height:100%;object-fit:cover}
+
+h2{margin:0;font-size:clamp(18px,5vw,24px);font-weight:800;text-align:center}
+.subtitle{font-size:clamp(10px,2.5vw,12px);color:var(--muted);text-align:center;margin:clamp(2px,1vw,4px) 0 clamp(8px,2vw,12px)}
+.form-notice{display:none;width:100%;margin:0 0 12px;padding:10px 12px;border:2px solid;border-left-width:4px;border-radius:8px;background:#fff;font-size:13px;line-height:1.45;text-align:left;overflow-wrap:anywhere}
+.form-notice.success{display:block;color:#047857;border-color:#059669}
+.form-notice.error{display:block;color:#be123c;border-color:#dc2626}
+
+.progress{width:100%;height:clamp(4px,1vw,6px);background:var(--border);border-radius:999px;margin-bottom:clamp(12px,2vw,16px);overflow:hidden}
+.progress-fill{height:100%;width:0%;background:linear-gradient(135deg,#064e3b,#0f766e);transition:width .4s ease}
+
+.toggle-theme{position:absolute;top:clamp(8px,2vw,10px);right:clamp(8px,2vw,10px);cursor:pointer;z-index:1000;padding:clamp(4px,1vw,6px);background:var(--card);border-radius:6px;border:1px solid var(--border)}
+
+.role-switch{display:flex;background:rgba(15,118,110,.15);border-radius:999px;padding:clamp(2px,0.5vw,4px);margin-bottom:clamp(10px,2vw,14px);width:100%;gap:clamp(2px,1vw,4px)}
+.role-btn{flex:1;padding:clamp(6px,1.5vw,8px);border:none;border-radius:999px;font-weight:600;font-size:clamp(11px,2vw,13px);cursor:pointer;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;gap:clamp(3px,1vw,5px);transition:.25s;text-align:center}
+.role-btn.active{background:linear-gradient(135deg,#064e3b,#0f766e);color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+
+.field{width:100%;margin-bottom:clamp(8px,2vw,12px)}
+label{display:block;font-size:clamp(10px,2vw,12px);font-weight:600;margin-bottom:clamp(2px,0.5vw,4px)}
+.input-wrap{position:relative}
+input, select, textarea{width:100%;padding:clamp(8px,2vw,12px) clamp(28px,2vw,34px) clamp(8px,2vw,12px) clamp(28px,2vw,32px);border-radius:clamp(8px,1.5vw,10px);border:1px solid var(--border);background:transparent;color:var(--text);font-size:clamp(12px,2vw,14px);transition:border .2s,box-shadow .2s;font-family:inherit}
+textarea{resize:vertical;min-height:clamp(80px,15vw,120px)}
+select{appearance:none;padding-right:clamp(28px,2vw,32px)}
+input:focus, select:focus, textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(15,118,110,.15)}
+.icon{position:absolute;left:clamp(6px,1vw,10px);top:50%;transform:translateY(-50%);color:var(--muted);width:clamp(16px,3vw,20px);height:clamp(16px,3vw,20px)}
+.eye{position:absolute;right:clamp(4px,1vw,8px);top:50%;transform:translateY(-50%);cursor:pointer;padding:4px;border-radius:6px;width:clamp(16px,3vw,20px);height:clamp(16px,3vw,20px)}
+
+.hint{font-size:clamp(9px,1.5vw,11px);color:var(--muted);margin-top:2px;min-height:14px}
+.hint.error{color:var(--danger)}
+.hint.success{color:var(--success)}
+
+.strength-bar{height:clamp(4px,1vw,6px);border-radius:999px;background:var(--border);overflow:hidden;margin-top:clamp(2px,0.5vw,4px)}
+.strength-fill{height:100%;width:0;background:#ef4444;transition:.3s}
+
+.submit-btn{width:100%;padding:clamp(10px,2vw,14px);border:none;border-radius:clamp(10px,1.5vw,12px);font-weight:700;font-size:clamp(12px,2vw,14px);background:linear-gradient(135deg,#064e3b,#0f766e);color:#fff;cursor:pointer;margin-top:clamp(12px,2vw,16px);display:flex;align-items:center;justify-content:center;gap:clamp(4px,1vw,6px);opacity:.6;pointer-events:none;transition:.3s}
+.submit-btn.enabled{opacity:1;pointer-events:auto}
+.spinner{width:clamp(12px,2vw,16px);height:clamp(12px,2vw,16px);border:3px solid rgba(255,255,255,.3);border-top:3px solid #fff;border-radius:50%;animation:spin 1s linear infinite;display:none}
+.submit-btn.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.login-link{margin-top:clamp(10px,2vw,14px);font-size:clamp(10px,1.5vw,12px);color:var(--muted);text-align:center}
+.login-link a{color:#34d399;font-weight:600;text-decoration:none}
+
+/* Shake animation */
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.shake{animation:shake .3s ease}
+
+/* Two-column grid for both sections */
+.user-grid, .staff-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.5vw,10px)}
+.user-grid .field, .staff-grid .field{margin-bottom:0}
+
+/* Virtual Sessions Section */
+.virtual-sessions-section{width:100%;margin-top:clamp(14px,2.5vw,18px);padding:clamp(12px,2vw,16px);background:rgba(6,78,59,.08);border:1px solid rgba(15,118,110,.2);border-radius:clamp(10px,1.5vw,12px);display:none}
+.virtual-sessions-section.show{display:block}
+.vs-title{font-size:clamp(13px,2.5vw,15px);font-weight:700;color:var(--text);margin:0 0 clamp(10px,2vw,14px) 0;display:flex;align-items:center;gap:clamp(6px,1vw,8px)}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.5vw,10px)}
+.vs-grid-full{grid-column:1/-1}
+.vs-checkbox{display:flex;align-items:center;grid-column:1/-1;gap:clamp(8px,1.5vw,12px);margin-bottom:clamp(10px,2vw,14px)}
+.vs-checkbox input{width:clamp(18px,3vw,22px);height:clamp(18px,3vw,22px);cursor:pointer}
+</style>
+</head>
+<body class="dark">
+
+<canvas id="bgCanvas"></canvas>
+<div class="toggle-theme" onclick="document.body.classList.toggle('dark');updateTheme();lucide.createIcons()"><i data-lucide="sun"></i></div>
+
+<div class="wrapper">
+  <div class="card">
+    <div class="inner" id="innerCard">
+      <div class="logo"><img src="system logo (2).png" alt="Logo"></div>
+      <h2>Secure Registration</h2>
+      <p class="subtitle">Create your secure account</p>
+      <div class="form-notice" id="registrationMessage" role="status" aria-live="polite"></div>
+
+      <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+
+      <div class="role-switch" style="display:none">
+        <button type="button" id="userBtn" class="role-btn active" onclick="toggleRole(false)"><i data-lucide="user"></i>User</button>
+        <button type="button" id="staffBtn" class="role-btn" onclick="toggleRole(true)"><i data-lucide="briefcase"></i>Staff</button>
+      </div>
+
+      <form id="regForm" style="width:100%" novalidate>
+        <!-- User Section -->
+        <div id="userFields" class="user-grid">
+          <div class="field">
+            <label>Full Name</label>
+            <div class="input-wrap">
+              <i data-lucide="user" class="icon"></i>
+              <input type="text" id="fullName" placeholder="Full name" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>National ID</label>
+            <div class="input-wrap">
+              <i data-lucide="id-card" class="icon"></i>
+              <input type="text" id="userNationalId" placeholder="e.g. 12345678A12" maxlength="14" minlength="8" pattern="[A-Za-z0-9]{8,14}" title="Use 8 to 14 letters and numbers, including at least one letter and one number." required>
+            </div>
+            <div id="userNationalIdHint" class="hint"></div>
+          </div>
+          <div class="field">
+            <label>Email address</label>
+            <div class="input-wrap">
+              <i data-lucide="mail" class="icon"></i>
+              <input type="email" id="userEmail" placeholder="name@company.com" required>
+            </div>
+            <div id="userEmailHint" class="hint"></div>
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <div class="input-wrap">
+              <i data-lucide="phone" class="icon"></i>
+              <input type="tel" id="userPhone" placeholder="+1234567890">
+            </div>
+          </div>
+          <div class="field">
+            <label>WhatsApp</label>
+            <div class="input-wrap">
+              <i data-lucide="message-circle" class="icon"></i>
+              <input type="tel" id="userWhatsapp" placeholder="+1234567890">
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Section -->
+        <div id="staffFields" style="display:none" class="staff-grid">
+          <div class="field">
+            <label>Full Name</label>
+            <div class="input-wrap"><i data-lucide="user" class="icon"></i><input type="text" id="staffName" placeholder="Full name"></div>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="input-wrap"><i data-lucide="mail" class="icon"></i><input type="email" id="staffEmail" placeholder="staff@company.com"></div>
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <div class="input-wrap"><i data-lucide="phone" class="icon"></i><input type="tel" id="staffPhone" placeholder="+1234567890"></div>
+          </div>
+          <div class="field">
+            <label>WhatsApp</label>
+            <div class="input-wrap"><i data-lucide="message-circle" class="icon"></i><input type="tel" id="staffWhatsapp" placeholder="+1234567890"></div>
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <div class="input-wrap"><i data-lucide="user-check" class="icon"></i>
+              <select id="staffRole">
+                <option value="staff">Staff</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="assistant">Assistant</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Virtual Sessions Section (Staff Only) -->
+        <div id="virtualSessionsSection" class="virtual-sessions-section">
+          <div class="vs-checkbox">
+            <input type="checkbox" id="enableVirtualSession">
+            <label for="enableVirtualSession" style="margin:0;cursor:pointer;font-weight:600;font-size:clamp(11px,2vw,13px)">Add Virtual Session Details</label>
+          </div>
+          
+          <div id="virtualSessionFields" style="display:none">
+            <div class="vs-grid">
+              <div class="field">
+                <label>Session Date</label>
+                <div class="input-wrap">
+                  <i data-lucide="calendar" class="icon"></i>
+                  <input type="date" id="sessionDate">
+                </div>
+              </div>
+              <div class="field">
+                <label>Start Time</label>
+                <div class="input-wrap">
+                  <i data-lucide="clock" class="icon"></i>
+                  <input type="time" id="startTime">
+                </div>
+              </div>
+              <div class="field">
+                <label>End Time</label>
+                <div class="input-wrap">
+                  <i data-lucide="clock" class="icon"></i>
+                  <input type="time" id="endTime">
+                </div>
+              </div>
+              <div class="field">
+                <label>Held At</label>
+                <div class="input-wrap">
+                  <i data-lucide="map-pin" class="icon"></i>
+                  <input type="text" id="heldAt" placeholder="Location">
+                </div>
+              </div>
+              <div class="field">
+                <label>Case Number</label>
+                <div class="input-wrap">
+                  <i data-lucide="hash" class="icon"></i>
+                  <input type="text" id="caseNumber" placeholder="Case #">
+                </div>
+              </div>
+              <div class="field">
+                <label>Presiding Judge</label>
+                <div class="input-wrap">
+                  <i data-lucide="user-shield" class="icon"></i>
+                  <input type="text" id="presidingJudge" placeholder="Judge name">
+                </div>
+              </div>
+              <div class="field vs-grid-full">
+                <label>Comments</label>
+                <div class="input-wrap">
+                  <i data-lucide="message-square" class="icon"></i>
+                  <select id="commentsDropdown" onchange="handleCommentsChange()">
+                    <option value="">-- Select --</option>
+                    <option value="success">It was a success</option>
+                    <option value="lagging">It was lagging but a success</option>
+                    <option value="network">It failed due to network</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </div>
+              <div id="customCommentField" class="field vs-grid-full" style="display:none">
+                <label>Custom Comments</label>
+                <div class="input-wrap">
+                  <textarea id="customComment" placeholder="Describe what happened..."></textarea>
+                </div>
+              </div>
+              <div class="field vs-grid-full">
+                <label>Supported By (Current User - Read Only)</label>
+                <div class="input-wrap">
+                  <i data-lucide="user" class="icon"></i>
+                  <input type="text" id="supportedBy" readonly placeholder="Will be auto-filled">
+                </div>
+              </div>
+              <div class="field vs-grid-full">
+                <label>Representative Signature</label>
+                <div class="input-wrap">
+                  <i data-lucide="pen-tool" class="icon"></i>
+                  <input type="text" id="representativeSignature" placeholder="Signature">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passwords -->
+        <div class="field">
+          <label>Password</label>
+          <div class="input-wrap">
+            <i data-lucide="lock" class="icon"></i>
+            <input type="password" id="password" placeholder="••••••••" required>
+            <i data-lucide="eye" class="eye" id="togglePwd"></i>
+          </div>
+          <div class="strength-bar"><div id="strengthFill" class="strength-fill"></div></div>
+          <div id="strengthText" class="hint"></div>
+        </div>
+
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <i data-lucide="lock" class="icon"></i>
+            <input type="password" id="confirmPwd" placeholder="••••••••" required>
+          </div>
+          <div id="confirmHint" class="hint"></div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="submit-btn">
+          <span>Create Account</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+
+      <div class="login-link">Already registered? <a href="login.html">Login here</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+const canvas=document.getElementById('bgCanvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+const particleCount=Math.min(60,window.innerWidth/12);
+function initCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;particles=[];for(let i=0;i<particleCount;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,r:Math.random()*2+1});}}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);const color=document.body.classList.contains('dark')?'45, 212, 191':'15, 118, 110';particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${color},0.3)`;ctx.fill();});requestAnimationFrame(animate);}window.addEventListener('resize',initCanvas);initCanvas();animate();
+
+/* Toggle sections & validations */
+const userFields=document.getElementById('userFields');
+const staffFields=document.getElementById('staffFields');
+const virtualSessionsSection=document.getElementById('virtualSessionsSection');
+const virtualSessionFields=document.getElementById('virtualSessionFields');
+const enableVirtualSession=document.getElementById('enableVirtualSession');
+const userBtn=document.getElementById('userBtn');
+const staffBtn=document.getElementById('staffBtn');
+const pwd=document.getElementById('password');
+const confirmPwd=document.getElementById('confirmPwd');
+const submitBtn=document.getElementById('submitBtn');
+const strengthFill=document.getElementById('strengthFill');
+const strengthText=document.getElementById('strengthText');
+const togglePwd=document.getElementById('togglePwd');
+const progressFill=document.getElementById('progressFill');
+const userEmail=document.getElementById('userEmail');
+const userEmailHint=document.getElementById('userEmailHint');
+const confirmHint=document.getElementById('confirmHint');
+
+function updateTheme(){document.getElementById('innerCard').style.background=document.body.classList.contains('dark')?'#020617':'#f9f9f9';}
+updateTheme();
+
+function toggleRole(isStaff){
+  if(isStaff){
+    userFields.style.display='grid';
+    staffFields.style.display='grid';
+    virtualSessionsSection.classList.add('show');
+    staffBtn.classList.add('active');
+    userBtn.classList.remove('active');
+  }
+  else{
+    userFields.style.display='grid';
+    staffFields.style.display='none';
+    virtualSessionsSection.classList.remove('show');
+    enableVirtualSession.checked=false;
+    virtualSessionFields.style.display='none';
+    userBtn.classList.add('active');
+    staffBtn.classList.remove('active');
+  }
+  validateForm();
+  updateProgress();
+}
+
+function handleCommentsChange(){
+  const selected=document.getElementById('commentsDropdown').value;
+  const customField=document.getElementById('customCommentField');
+  if(selected==='custom'){
+    customField.style.display='block';
+  }else{
+    customField.style.display='none';
+    document.getElementById('customComment').value='';
+  }
+}
+
+enableVirtualSession.addEventListener('change',()=>{
+  virtualSessionFields.style.display=enableVirtualSession.checked?'block':'none';
+  if(!enableVirtualSession.checked){
+    document.getElementById('sessionDate').value='';
+    document.getElementById('startTime').value='';
+    document.getElementById('endTime').value='';
+    document.getElementById('heldAt').value='';
+    document.getElementById('caseNumber').value='';
+    document.getElementById('presidingJudge').value='';
+    document.getElementById('commentsDropdown').value='';
+    document.getElementById('customComment').value='';
+    document.getElementById('representativeSignature').value='';
+  }
+});
+
+pwd.addEventListener('input',()=>{checkStrength();validateForm();updateProgress();});
+confirmPwd.addEventListener('input',()=>{validateForm();updateProgress();});
+userEmail.addEventListener('input',()=>{validateEmail();updateProgress();});
+document.getElementById('userNationalId').addEventListener('input',()=>{validateNationalId();validateForm();});
+
+function validateNationalId(){
+  const nationalIdInput=document.getElementById('userNationalId');
+  const hint=document.getElementById('userNationalIdHint');
+  const value=nationalIdInput.value.trim();
+  const valid=/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{8,14}$/.test(value);
+  const message=!value?'National ID is required.':valid?'Valid National ID':'Use 8 to 14 letters and numbers, including at least one letter and one number.';
+  nationalIdInput.setCustomValidity(valid||!value?'':message);
+  hint.textContent=message;
+  hint.className='hint '+(valid?'success':value?'error':'');
+  return valid;
+}
+
+function validateEmail(){
+  if(!userEmail.value){userEmailHint.textContent='';return false;}
+  const valid=/^\S+@\S+\.\S+$/.test(userEmail.value);
+  userEmailHint.textContent=valid?'Valid email address':'Enter a valid email';
+  userEmailHint.className='hint '+(valid?'success':'error');
+  return valid;
+}
+
+function checkStrength(){const val=pwd.value;let score=0;if(val.length>=6)score++;if(/\d/.test(val))score++;if(/[^a-zA-Z0-9]/.test(val))score++;;const widths=['0%','33%','66%','100%'];const colors=['#ef4444','#f59e0b','#22c55e','#10b981'];const texts=['Weak password','Good password','Strong password','Very strong password'];strengthFill.style.width=widths[score];strengthFill.style.background=colors[score];strengthText.textContent=val?texts[score]:'';}
+
+function validateForm(){const strong=strengthFill.style.width==='66%'||strengthFill.style.width==='100%';const match=pwd.value&&pwd.value===confirmPwd.value;const nationalIdValid=staffBtn.classList.contains('active')||validateNationalId();if(confirmPwd.value){confirmHint.textContent=match?'Passwords match':'Passwords do not match';confirmHint.className='hint '+(match?'success':'error');}else{confirmHint.textContent='';}if(strong&&match&&validateEmail()&&nationalIdValid)submitBtn.classList.add('enabled');else submitBtn.classList.remove('enabled');}
+
+function updateProgress(){let steps=0,total=3;if(validateEmail())steps++;if(pwd.value.length>=6)steps++;if(pwd.value&&pwd.value===confirmPwd.value)steps++;progressFill.style.width=(steps/total*100)+'%';}
+
+togglePwd.addEventListener('click',()=>{const type=pwd.type==='password'?'text':'password';pwd.type=confirmPwd.type=type;togglePwd.setAttribute('data-lucide',type==='text'?'eye-off':'eye');lucide.createIcons();});
+
+document.getElementById('regForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!submitBtn.classList.contains('enabled')){
+    submitBtn.classList.add('shake');
+    setTimeout(()=>submitBtn.classList.remove('shake'),300);
+    return;
+  }
+  submitBtn.classList.add('loading');
+  
+  // Collect form data
+  const isStaff=staffBtn.classList.contains('active');
+  const fullName=isStaff?document.getElementById('staffName').value:document.getElementById('fullName').value;
+  const email=isStaff?document.getElementById('staffEmail').value:document.getElementById('userEmail').value;
+  const phone=isStaff?document.getElementById('staffPhone').value:document.getElementById('userPhone').value;
+  const whatsapp=isStaff?document.getElementById('staffWhatsapp').value:document.getElementById('userWhatsapp').value;
+  const nationalId=isStaff?'':document.getElementById('userNationalId').value.trim();
+  const role=isStaff?document.getElementById('staffRole').value:'user';
+  const password=document.getElementById('password').value;
+  
+  const formData={
+    fullName,
+    email,
+    phone,
+    whatsapp,
+    nationalId,
+    role,
+    password
+  };
+  
+  // Add virtual session if enabled
+  if(isStaff&&enableVirtualSession.checked){
+    formData.virtualSession={
+      date:document.getElementById('sessionDate').value,
+      startTime:document.getElementById('startTime').value,
+      endTime:document.getElementById('endTime').value,
+      heldAt:document.getElementById('heldAt').value,
+      caseNumber:document.getElementById('caseNumber').value,
+      presidingJudge:document.getElementById('presidingJudge').value,
+      comments:document.getElementById('commentsDropdown').value,
+      customComment:document.getElementById('customComment').value,
+      representativeSignature:document.getElementById('representativeSignature').value
+    };
+  }
+  
+  try {
+    const response = await fetch('register.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Unable to create account');
+    }
+    const message = document.getElementById('registrationMessage');
+    message.className = 'form-notice success';
+    message.textContent = result.message || 'Registration successful. Redirecting to login...';
+    setTimeout(() => { window.location.href = 'login.html'; }, 1600);
+  } catch (error) {
+    submitBtn.classList.remove('loading');
+    const message = document.getElementById('registrationMessage');
+    message.className = 'form-notice error';
+    message.textContent = error.message || 'Unable to create account';
+  }
+});
+</script>
+</body>
+</html>
